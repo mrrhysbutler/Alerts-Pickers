@@ -11,8 +11,13 @@ extension UIAlertController {
     ///   - maximumDate: maximum date of date picker
     ///   - action: an action for datePicker value change
     
-    public func addDatePicker(mode: UIDatePickerMode, date: Date?, minimumDate: Date? = nil, maximumDate: Date? = nil, countDownDuration: TimeInterval? = nil, minuteInterval: Int? = nil, action: DatePickerViewController.Action?) {
-        let datePicker = DatePickerViewController(mode: mode, date: date, minimumDate: minimumDate, maximumDate: maximumDate, countDownDuration: countDownDuration, minuteInterval: minuteInterval, action: action)
+    public func addDatePicker(mode: UIDatePickerMode, date: Date?, minimumDate: Date? = nil, maximumDate: Date? = nil, action: DatePickerViewController.Action?) {
+        let datePicker = DatePickerViewController(mode: mode, date: date, minimumDate: minimumDate, maximumDate: maximumDate, action: action)
+        set(vc: datePicker, height: 217)
+    }
+
+    public func addCountdownPicker(countDownDuration: TimeInterval? = nil, minuteInterval: Int? = nil, action: DatePickerViewController.CountdownAction?) {
+        let datePicker = DatePickerViewController(countDownDuration: countDownDuration, minuteInterval: minuteInterval, action: action)
         set(vc: datePicker, height: 217)
     }
 }
@@ -20,22 +25,32 @@ extension UIAlertController {
 final public class DatePickerViewController: UIViewController {
     
     public typealias Action = (Date) -> Void
+    public typealias CountdownAction = (TimeInterval) -> Void
     
     fileprivate var action: Action?
-    
-    fileprivate lazy var datePicker: UIDatePicker = { [unowned self] in
-        $0.addTarget(self, action: #selector(DatePickerViewController.actionForDatePicker), for: .valueChanged)
-        return $0
-    }(UIDatePicker())
-    
-    required public init(mode: UIDatePickerMode, date: Date? = nil, minimumDate: Date? = nil, maximumDate: Date? = nil, countDownDuration: TimeInterval? = nil, minuteInterval: Int? = nil, action: Action?) {
+    fileprivate var countdownAction: CountdownAction?
+
+    fileprivate var _datePicker = UIDatePicker()
+    fileprivate var datePicker: UIDatePicker {
+        return _datePicker
+    }
+
+    required public init(countDownDuration: TimeInterval? = nil, minuteInterval: Int? = nil, action: CountdownAction?) {
+        super.init(nibName: nil, bundle: nil)
+        datePicker.datePickerMode = .countDownTimer
+        datePicker.addTarget(self, action: #selector(DatePickerViewController.actionForCountdownPicker), for: .valueChanged)
+        datePicker.countDownDuration = countDownDuration ?? 0.0
+        datePicker.minuteInterval = minuteInterval ?? 1
+        self.countdownAction = action
+    }
+
+    required public init(mode: UIDatePickerMode, date: Date? = nil, minimumDate: Date? = nil, maximumDate: Date? = nil, action: Action?) {
         super.init(nibName: nil, bundle: nil)
         datePicker.datePickerMode = mode
+        datePicker.addTarget(self, action: #selector(DatePickerViewController.actionForDatePicker), for: .valueChanged)
         datePicker.date = date ?? Date()
         datePicker.minimumDate = minimumDate
         datePicker.maximumDate = maximumDate
-        datePicker.countDownDuration = countDownDuration ?? 0.0
-        datePicker.minuteInterval = minuteInterval ?? 1
         self.action = action
     }
     
@@ -50,7 +65,11 @@ final public class DatePickerViewController: UIViewController {
     override public func loadView() {
         view = datePicker
     }
-    
+
+    @objc func actionForCountdownPicker() {
+        countdownAction?(datePicker.countDownDuration)
+    }
+
     @objc func actionForDatePicker() {
         action?(datePicker.date)
     }
