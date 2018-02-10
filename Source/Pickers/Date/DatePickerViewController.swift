@@ -31,11 +31,14 @@ final public class DatePickerViewController: UIViewController {
     required public init(mode: UIDatePickerMode, date: Date? = nil, minimumDate: Date? = nil, maximumDate: Date? = nil, countDownDuration: TimeInterval? = nil, minuteInterval: Int? = nil, action: Action?) {
         super.init(nibName: nil, bundle: nil)
         datePicker.datePickerMode = mode
-        datePicker.date = date ?? Date()
-        datePicker.minimumDate = minimumDate
-        datePicker.maximumDate = maximumDate
-        datePicker.countDownDuration = countDownDuration ?? 0.0
-        datePicker.minuteInterval = minuteInterval ?? 1
+        if mode == .countDownTimer {
+            datePicker.countDownDuration = countDownDuration ?? 0.0
+            datePicker.minuteInterval = minuteInterval ?? 1
+        } else {
+            datePicker.date = date ?? Date()
+            datePicker.minimumDate = minimumDate
+            datePicker.maximumDate = maximumDate
+        }
         self.action = action
     }
     
