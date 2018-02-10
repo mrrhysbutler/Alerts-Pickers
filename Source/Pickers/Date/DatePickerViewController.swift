@@ -12,7 +12,7 @@ extension UIAlertController {
     ///   - action: an action for datePicker value change
     
     public func addDatePicker(mode: UIDatePickerMode, date: Date?, minimumDate: Date? = nil, maximumDate: Date? = nil, countDownDuration: TimeInterval? = nil, minuteInterval: Int? = nil, action: DatePickerViewController.Action?) {
-        let datePicker = DatePickerViewController(mode: mode, date: date, minimumDate: minimumDate, maximumDate: maximumDate, action: action)
+        let datePicker = DatePickerViewController(mode: mode, date: date, minimumDate: minimumDate, maximumDate: maximumDate, maximumDate: maximumDate, maximumDate: maximumDate, action: action)
         set(vc: datePicker, height: 217)
     }
 }
@@ -31,14 +31,11 @@ final public class DatePickerViewController: UIViewController {
     required public init(mode: UIDatePickerMode, date: Date? = nil, minimumDate: Date? = nil, maximumDate: Date? = nil, countDownDuration: TimeInterval? = nil, minuteInterval: Int? = nil, action: Action?) {
         super.init(nibName: nil, bundle: nil)
         datePicker.datePickerMode = mode
-        if mode == .countDownTimer {
-            datePicker.countDownDuration = countDownDuration ?? 0.0
-            datePicker.minuteInterval = minuteInterval ?? 1
-        } else {
-            datePicker.date = date ?? Date()
-            datePicker.minimumDate = minimumDate
-            datePicker.maximumDate = maximumDate
-        }
+        datePicker.date = date ?? Date()
+        datePicker.minimumDate = minimumDate
+        datePicker.maximumDate = maximumDate
+        datePicker.countDownDuration = countDownDuration ?? 0.0
+        datePicker.minuteInterval = minuteInterval ?? 1
         self.action = action
     }
     
