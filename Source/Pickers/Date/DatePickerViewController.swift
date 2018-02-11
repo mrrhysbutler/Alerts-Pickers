@@ -37,6 +37,7 @@ final public class DatePickerViewController: UIViewController {
 
     required public init(countDownDuration: TimeInterval? = nil, minuteInterval: Int? = nil, action: CountdownAction?) {
         super.init(nibName: nil, bundle: nil)
+        datePicker.setDate(Date(), animated: true)
         datePicker.datePickerMode = .countDownTimer
         datePicker.addTarget(self, action: #selector(DatePickerViewController.actionForCountdownPicker), for: .valueChanged)
         datePicker.countDownDuration = countDownDuration ?? 0.0
