@@ -37,12 +37,14 @@ final public class DatePickerViewController: UIViewController {
 
     required public init(countDownDuration: TimeInterval? = nil, minuteInterval: Int? = nil, action: CountdownAction?) {
         super.init(nibName: nil, bundle: nil)
+        let seconds = Int(countDownDuration ?? 0.0)
+
         datePicker.datePickerMode = .countDownTimer
         datePicker.addTarget(self, action: #selector(DatePickerViewController.actionForCountdownPicker), for: .valueChanged)
         let calendar = Calendar(identifier: .gregorian)
-        let date = DateComponents(calendar: calendar, hour: 1, minute: 30).date!
+        let date = DateComponents(calendar: calendar, hour: Int(seconds / 3600), minute: Int((seconds % 3600) / 60)).date!
         datePicker.setDate(date, animated: true)
-        datePicker.countDownDuration = countDownDuration ?? 0.0
+        //datePicker.countDownDuration = countDownDuration ?? 0.0
         datePicker.minuteInterval = minuteInterval ?? 1
         self.countdownAction = action
     }
